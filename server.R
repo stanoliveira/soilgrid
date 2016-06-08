@@ -1,4 +1,5 @@
-#datasource <- read.fwf(file="data/testRead.tst", widths = list(c(6), c(12), c(9), c(0)), n=2)
+#datasource <- read.fwf(file="BR.SOL", widths = list(c(1,10,189), c(200), c(200), c(200), c(200),c(200),c(200),c(200),c(200),c(200),c(200),c(200),c(0)), n=102731, as.is=TRUE)
+#save(datasource, 'datasource.rda')
 load("data/datasource.rda")
 
 server <- function(input,output) {
