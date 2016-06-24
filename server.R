@@ -1,7 +1,3 @@
-#datasource <- read.fwf(file="BR.SOL", widths = list(c(1,10,189), c(200), c(200), c(200), c(200),c(200),c(200),c(200),c(200),c(200),c(200),c(200),c(0)), n=102731, as.is=TRUE)
-#save(datasource, 'datasource.rda')
-load("data/datasource.rda")
-
 server <- function(input,output) {
   
   output$latitudeSelecionada <- renderText({
