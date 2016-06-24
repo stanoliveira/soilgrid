@@ -1,5 +1,22 @@
 server <- function(input,output) {
   
+  ################## Lendo o conjunto de dados para uso posterior
+  Data <- reactive({
+    
+    ## Arquivo a ser lido
+    inFile <- input$file1
+    
+    ## Se nenhum arquivo estiver carregado não faz nada
+    if (is.null(inFile))
+      return(NULL)
+    
+    ## Se o arquivo tiver sido carregado, aqui ele é lido
+    df.raw <- read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote)
+    
+    ## Retorna arquivo lido
+    return(df.raw)
+  })
+  
   output$latitudeSelecionada <- renderText({
     paste("Latitude selecionada = ", input$latitude)
     })
