@@ -17,6 +17,23 @@ server <- function(input,output) {
     return(df.raw)
   })
   
+  # Opção para tornar paginável
+  myOptions <- reactive({  
+    list(
+      page=ifelse(input$pageable==TRUE,'enable','disable'),
+      pageSize=input$pagesize
+    ) 
+  })
+  
+  ################## Output para a tabela
+  output$raw <- renderGvis({
+    
+    ## Por segurança caso o arquivo ainda n tenha sido lido
+    if (is.null(input$file1)) { return() }
+    
+    gvisTable(Data(), options=myOptions())         
+  })
+  
   output$latitudeSelecionada <- renderText({
     paste("Latitude selecionada = ", input$latitude)
     })
