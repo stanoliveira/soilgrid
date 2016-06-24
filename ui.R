@@ -36,8 +36,22 @@ ui <- fluidPage (
       
       ## Painel principal
       mainPanel(
-       textOutput("latitudeSelecionada"),
-       textOutput("longitudeSelecionada")
+        
+        ## Define conjunto de abas
+        tabsetPanel(
+          
+          ## Primeira aba
+          tabPanel("Dados",
+                   h4(textOutput("caption1")),
+                   tableOutput('raw'),
+                   value = 1),
+          
+          ## Segunda aba
+          tabPanel("Plot",
+                   textOutput("latitudeSelecionada"),
+                   textOutput("longitudeSelecionada")
+                   )
+        )
       )
     )
   )
