@@ -13,28 +13,33 @@ server <- function(input,output) {
     ## Se o arquivo tiver sido carregado, aqui ele é lido
     df.raw <- read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote)
     
+    ## Pega as latitudes e longitudes
+    lati = min(df.raw$lat) - 1
+    latf = max(df.raw$lat) + 1
+    loni = min(df.raw$lon) - 1
+    lonf = max(df.raw$lon) - 1
+    coordinates(df.raw) <- ~lon+lat
+    
+    ## Filtrando o dbf
+    dbf_filtrado = dbf[dbf$X > loni & dbf$X < lonf & dbf$Y > lati & dbf$Y < latf,]
+    coordinates(dbf_filtrado) <- ~X+Y
+    
+    ## Calcula as distâncias mínimas para cada ponto
+    nn = apply(gDistance(dbf_filtrado, df.raw, byid=TRUE), 1, which.min)
+    
+    ## Encontra os perfis e coloca as coordenadas
+    perfis = as.character(dbf_filtrado@data$SoilProfil[nn])
+    coords = coordinates(dbf_filtrado)[nn,]
+    
+    ## Finaliza com o resultado
+    resultado = data.frame(df.raw, perfis, coords)
+    rownames(resultado) <- NULL
+    
     ## Retorna arquivo lido
-    return(df.raw)
+    return(resultado)
   })
   
-  # Opção para tornar paginável
-  myOptions <- reactive({  
-    list(
-      page=ifelse(input$pageable==TRUE,'enable','disable'),
-      pageSize=input$pagesize
-    ) 
-  })
-  
-  ################## Output para a tabela
-  # output$raw <- renderGvis({
-  #   
-  #   ## Por segurança caso o arquivo ainda n tenha sido lido
-  #   if (is.null(input$file1)) { return() }
-  #   
-  #   print('passou até aqui')
-  #   gvisTable(Data(), options=myOptions())         
-  # })
-  
+  ## Mostra os dados que subiram em uma janela
   output$raw <- renderTable({
 
     ## Por segurança caso o arquivo ainda n tenha sido lido
@@ -43,12 +48,14 @@ server <- function(input,output) {
     Data()
   })
   
-  output$latitudeSelecionada <- renderText({
-    paste("Latitude selecionada = ", input$latitude)
-    })
-
-  output$longitudeSelecionada <- renderText({
-    paste("Longitude selecionada = ", input$longitude)
+  ## Mostra os dados filtrados pelo perfil
+  output$filtrado <- renderTable({
+    
+    ## Por segurança caso o arquivo ainda n tenha sido lido
+    if (is.null(input$file1)) { return() }
+    
+    ## Filtrando a tabela
+    tabela <- datasource[datasource$V2 %in% Data()$perfis,]
   })
   
   # downloadHandler() takes two arguments, both functions.
@@ -66,9 +73,23 @@ server <- function(input,output) {
     # the argument 'file'.
     content = function(file) {
       
-      # Write to a file specified by the 'file' argument
-      registerIndex = which(datasource$V2 == input$coordenadaID)
-      writeLines(c(paste0(datasource[registerIndex, 1], datasource[registerIndex, 2], datasource[registerIndex, 3]), paste(datasource[registerIndex, 4]), paste(datasource[registerIndex, 5]), paste(datasource[registerIndex, 6]), paste(datasource[registerIndex, 7]), paste(datasource[registerIndex, 8]), paste(datasource[registerIndex, 9]), paste(datasource[registerIndex, 10]), paste(datasource[registerIndex, 11]), paste(datasource[registerIndex, 12]), paste(datasource[registerIndex, 13]), paste(datasource[registerIndex, 14])), file, sep = "\r\n")
+      ## Filtrando a tabela
+      tabela <- datasource[datasource$V2 %in% Data()$perfis,]
+    
+      ## Criando uma conexão para um arquivo
+      con <- file(file, 'w')
+      
+      ## Salvando em um arquivo txt
+      for (i in 1:nrow(tabela)) {
+        
+        ## Escreve primeiro bloco no arquivo
+        writeLines(paste(tabela[i,]), sep = "\r\n", con = con, useBytes = T)
+        
+        ## Escreve uma linha em branco
+        writeLines('\r', con=con, useBytes = T)
+      }
+      close(con)
+      
     }
   )
 }

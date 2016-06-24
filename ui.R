@@ -48,8 +48,8 @@ ui <- fluidPage (
           
           ## Segunda aba
           tabPanel("Plot",
-                   textOutput("latitudeSelecionada"),
-                   textOutput("longitudeSelecionada")
+                   tableOutput('filtrado'),
+                   downloadButton('downloadData', 'Download')
                    )
         )
       )
