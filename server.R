@@ -26,12 +26,21 @@ server <- function(input,output) {
   })
   
   ################## Output para a tabela
-  output$raw <- renderGvis({
-    
+  # output$raw <- renderGvis({
+  #   
+  #   ## Por segurança caso o arquivo ainda n tenha sido lido
+  #   if (is.null(input$file1)) { return() }
+  #   
+  #   print('passou até aqui')
+  #   gvisTable(Data(), options=myOptions())         
+  # })
+  
+  output$raw <- renderTable({
+
     ## Por segurança caso o arquivo ainda n tenha sido lido
     if (is.null(input$file1)) { return() }
-    
-    gvisTable(Data(), options=myOptions())         
+
+    Data()
   })
   
   output$latitudeSelecionada <- renderText({
