@@ -1,3 +1,5 @@
+## Arquivo com a lógica no servidor
+
 server <- function(input,output) {
   
   ################## Lendo o conjunto de dados para uso posterior
@@ -54,8 +56,12 @@ server <- function(input,output) {
     ## Por segurança caso o arquivo ainda n tenha sido lido
     if (is.null(input$file1)) { return() }
     
+    ## Criando um vetor só com os perfis sem o asterisco
+    perfis <- datasource$V2
+    perfis <- gsub(pattern = '\\*', replacement = '', x = perfis)
+    
     ## Filtrando a tabela
-    tabela <- datasource[datasource$V2 %in% Data()$perfis,]
+    tabela <- datasource[perfis %in% Data()$perfis,]
   })
   
   # downloadHandler() takes two arguments, both functions.
