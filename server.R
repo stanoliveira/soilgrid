@@ -79,8 +79,12 @@ server <- function(input,output) {
     # the argument 'file'.
     content = function(file) {
       
+      ## Criando um vetor só com os perfis sem o asterisco
+      perfis <- datasource$V2
+      perfis <- gsub(pattern = '\\*', replacement = '', x = perfis)
+      
       ## Filtrando a tabela
-      tabela <- datasource[datasource$V2 %in% Data()$perfis,]
+      tabela <- datasource[perfis %in% Data()$perfis,]
     
       ## Criando uma conexão para um arquivo
       con <- file(file, 'w')
