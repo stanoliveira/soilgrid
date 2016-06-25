@@ -1,3 +1,5 @@
+## Arquivo da interface
+
 ui <- fluidPage (
   
   ## Título da página  
@@ -47,7 +49,7 @@ ui <- fluidPage (
                    value = 1),
           
           ## Segunda aba
-          tabPanel("Plot",
+          tabPanel("Download",
                    tableOutput('filtrado'),
                    downloadButton('downloadData', 'Download')
                    )
