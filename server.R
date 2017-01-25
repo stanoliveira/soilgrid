@@ -61,7 +61,7 @@ server <- function(input,output) {
     perfis <- gsub(pattern = '\\*', replacement = '', x = perfis)
     
     ## Filtrando a tabela
-    tabela <- datasource[perfis %in% Data()$perfis,]
+    tabela <- datasource[perfis %in% Data()$perfis,-1]
   })
   
   # downloadHandler() takes two arguments, both functions.
@@ -93,7 +93,7 @@ server <- function(input,output) {
       for (i in 1:nrow(tabela)) {
         
         ## Escreve primeiro bloco no arquivo
-        writeLines(paste(tabela[i,]), sep = "\r\n", con = con, useBytes = T)
+        writeLines(paste(tabela[i,-1]), sep = "\r\n", con = con, useBytes = T)
         
         ## Escreve uma linha em branco
         writeLines('\r', con=con, useBytes = T)
